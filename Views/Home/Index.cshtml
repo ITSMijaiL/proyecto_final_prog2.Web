@@ -1,6 +1,7 @@
 ﻿@*@model IEnumerable<proyecto_final_prog2.Domain.Entities.Column>*@
+@model proyecto_final_prog2.Application.IApiClient
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Main Page";
 }
 
 @*<div class="text-center">
@@ -12,20 +13,29 @@
             <a>@item.column_title</a>
         }
     }
-</div>*@
+</div>
+<button type="button" class="btn btn-default" onclick="@Url.Action("Test_btn","Home")">
+    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+    Test
+</button>
+<input type="button" value="Go to Action" onclick="location.href='@Url.Action("Test_btn", "Home")'" />
+*@
 <div class="board">
 @if (Model != null)
 {
-        @foreach(var item in Model[0])
+        @foreach(var item in await Model.GetColumns())
         {
             <div class="column">
                 <h2>@item.column_title</h2>
-                @foreach (var tsks in @item.tasks)
+                @foreach (var tsks in await Model.GetTasksFromColumn(@item.ID))
                 {
                     <div class="task" draggable="true">
                         <p>@tsks.title</p>
                         <div class="tags">
-                            <span class="tag">Test</span>
+                            @foreach (var tag in await Model.GetTagsFromTask(@tsks.ID))
+                            {
+                                <span class="tag">@tag.tag_name</span>
+                            }
                         </div>
                     </div>
                 }

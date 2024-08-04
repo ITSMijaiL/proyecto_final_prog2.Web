@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using proyecto_final_prog2.Application;
 using proyecto_final_prog2.Domain.Entities;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace proyecto_final_prog2.Web.Controllers
 {
@@ -21,7 +22,14 @@ namespace proyecto_final_prog2.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(new List<object> { await _client.GetColumns(), await _client.GetTags(), await _client.GetTasks() });
+            return View(_client);
+        }
+
+        [ResponseCache(NoStore = true, Duration = 0, Location = ResponseCacheLocation.None)]
+        public IActionResult Test_btn()
+        {
+            //_logger.LogInformation("Hello world!");
+            return RedirectToAction("Index");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
