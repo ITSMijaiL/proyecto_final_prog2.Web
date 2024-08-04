@@ -1,8 +1,73 @@
-﻿@{
+﻿@*@model IEnumerable<proyecto_final_prog2.Domain.Entities.Column>*@
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
+@*<div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    @if(Model!=null){
+        @foreach(var item in Model)
+        {
+            <a>@item.column_title</a>
+        }
+    }
+</div>*@
+<div class="board">
+@if (Model != null)
+{
+        @foreach(var item in Model[0])
+        {
+            <div class="column">
+                <h2>@item.column_title</h2>
+                @foreach (var tsks in @item.tasks)
+                {
+                    <div class="task" draggable="true">
+                        <p>@tsks.title</p>
+                        <div class="tags">
+                            <span class="tag">Test</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+    @*
+    <div class="column">
+        <h2>To Do</h2>
+        <div class="task" draggable="true">
+            <p>Task 1</p>
+            <div class="tags">
+                <span class="tag">Important</span>
+            </div>
+        </div>
+        <div class="task" draggable="true">
+            <p>Task 2</p>
+            <div class="tags">
+                <span class="tag">Urgent</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="column">
+        <h2>In Progress</h2>
+        <div class="task" draggable="true">
+            <p>Task 3</p>
+            <div class="tags">
+                <span class="tag">Work</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="column">
+        <h2>Done</h2>
+        <div class="task" draggable="true">
+            <p>Task 4</p>
+            <div class="tags">
+                <span class="tag">Completed</span>
+            </div>
+        </div>
+    </div>
 </div>
+    *@
+

@@ -19,4 +19,58 @@ html {
 
 body {
   margin-bottom: 60px;
+/*}
+
+body {*/
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.board {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+.column {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    width: 30%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+    .column h2 {
+        margin-top: 0;
+        font-size: 1.5em;
+        color: #333;
+    }
+
+.task {
+    background-color: #e0e4e7;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    cursor: grab;
+}
+
+    .task p {
+        margin: 0;
+    }
+
+.tags {
+    margin-top: 10px;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.8em;
+    margin-right: 5px;
 }

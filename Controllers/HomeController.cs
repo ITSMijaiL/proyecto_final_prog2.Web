@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using proyecto_final_prog2.Web.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Hosting;
+using proyecto_final_prog2.Application;
+using proyecto_final_prog2.Domain.Entities;
 
 namespace proyecto_final_prog2.Web.Controllers
 {
@@ -8,19 +11,17 @@ namespace proyecto_final_prog2.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IApiClient _client;
+
+        public HomeController(ILogger<HomeController> logger, IApiClient client)
         {
             _logger = logger;
+            _client = client;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
+            return View(new List<object> { await _client.GetColumns(), await _client.GetTags(), await _client.GetTasks() });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -1,4 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using proyecto_final_prog2.Application;
+using proyecto_final_prog2.Application.Services;
+using proyecto_final_prog2.Infrastructure;
+using Refit;
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<AppDBContext>(options => {
+    options.UseSqlite(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+    );
+});
+builder.Services.AddScoped<ColumnService>();
+builder.Services.AddScoped<TagService>();
+builder.Services.AddScoped<TaskService>();
+
+builder.Services.AddRefitClient<IApiClient>().ConfigureHttpClient(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7052/");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("internal");
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
