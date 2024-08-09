@@ -47,6 +47,13 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseCors(x => x
+           .AllowAnyMethod()
+           .AllowAnyHeader()
+           .AllowCredentials()
+           //.WithOrigins("https://localhost:7158")); // Allow only this origin can also have multiple origins seperated with comma
+           .SetIsOriginAllowed(origin => true));// Allow any origin  
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

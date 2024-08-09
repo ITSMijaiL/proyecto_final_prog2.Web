@@ -20,21 +20,291 @@
 </button>
 <input type="button" value="Go to Action" onclick="location.href='@Url.Action("Test_btn", "Home")'" />
 *@
+<div class="d-flex justify-content-evenly">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#colcreateModal">
+        Crear columna
+    </button>
+    
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagCreateModal">
+        Crear nueva etiqueta
+    </button>
+    
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagEditModal">
+        Editar etiqueta
+    </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="colcreateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="colcreateModalLabel">Crear nueva columna</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="CreateColumn" asp-controller="Column">
+                <div class="modal-body">
+                    @*<partial name="_CreateColumnShared" />*@
+                    @{
+                        //Leccion aprendida: nunca usar <partial>...
+                        Html.RenderPartial("_CreateColumnShared", new proyecto_final_prog2.Infrastructure.Models.ColumnModel());
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="tagCreateModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagCreateModalLabel">Crear nueva etiqueta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="CreateTag" asp-controller="Tag">
+                <div class="modal-body">
+                    <p>El nombre de la etiqueta tiene que ser unico.</p>
+                    @{
+                        Html.RenderPartial("_CreateTagShared", new proyecto_final_prog2.Infrastructure.Models.TagModel());
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (Model != null)
+{
+        <div class="modal fade" id="tagEditModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tagCreateModalLabel">Editar etiquetas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        @foreach (var tag in await Model.GetTags())
+                        {
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagEditModal_@tag.ID">
+                            @tag.tag_name
+                        </button>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @foreach(var tag in await Model.GetTags())
+    {
+        <div class="modal fade" id="tagEditModal_@tag.ID" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tagEditModalLabel">Editar etiqueta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form asp-action="UpdateTag" asp-controller="Tag">
+                        <div class="modal-body">
+                            <input type="hidden" name="tag_id" value="@tag.ID"/>
+                            <p>El nombre de la etiqueta tiene que ser unico.</p>
+                            @{
+                                ViewBag.current_tagname = tag.tag_name;
+                                Html.RenderPartial("_EditTagShared", new proyecto_final_prog2.Infrastructure.Models.TagModel(), ViewData);
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-warning">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+    @foreach (var item in await Model.GetColumns())
+    {
+        <div class="modal fade" id="taskcreateModal_@item.column_title.Replace(' ','_')" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="colcreateModalLabel">Crear nueva tarea</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form asp-action="CreateTask" asp-controller="Task">
+                        <input type="hidden" name="currCol" value="@item.column_title"></input>
+                        <div class="modal-body">
+                            @{
+                                Html.RenderPartial("_CreateTaskShared", new proyecto_final_prog2.Infrastructure.Models.TaskModel());
+                            }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Crear</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="columnDeleteModal_@item.column_title.Replace(' ','_')" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="coldeleteModalLabel">Esta seguro de que quiere eliminar esta columna <b>junto a todas sus tareas</b>?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form asp-action="DeleteColumn" asp-controller="Column">
+                        <input type="hidden" name="column_id" value="@item.ID" />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @foreach (var tsks in await Model.GetTasksFromColumn(@item.ID))
+        {
+            <div class="modal fade" id="taskEditModal_@tsks.ID" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="taskeditModalLabel">Esta seguro de que quiere eliminar esta tarea?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form asp-action="UpdateTask" asp-controller="Task">
+                            <input type="hidden" name="task_id" value="@tsks.ID" />
+                            <div class="modal-body">
+                                @{
+                                    ViewBag.current_title = tsks.title;
+                                    ViewBag.current_text = tsks.text;
+                                    Html.RenderPartial("_EditTaskShared", new proyecto_final_prog2.Infrastructure.Models.TaskModel(), ViewData);
+                                }
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-warning">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="taskDeleteModal_@tsks.ID" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="taskdeleteModalLabel">Esta seguro de que quiere eliminar esta tarea?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form asp-action="DeleteTask" asp-controller="Task">
+                            <input type="hidden" name="task_id" value="@tsks.ID" />
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="tagLinkModal_@tsks.ID" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="tagLinkModalLabel">Añadir nueva etiqueta</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form asp-action="LinkTag" asp-controller="Tag">
+                            <input type="hidden" name="task_id" value="@tsks.ID" />
+                            <div class="modal-body">
+                                @{
+                                    List<proyecto_final_prog2.Domain.Entities.Tag> tags = await Model.GetTags();
+                                    //Console.WriteLine(tags.Count);
+                                    List<proyecto_final_prog2.Domain.Entities.Tag> tags_already_linked = await Model.GetTagsFromTask(@tsks.ID);
+                                    tags.RemoveAll(x=>tags_already_linked.Find(t=>t.ID==x.ID)!=null);
+                                    Html.RenderPartial("_DropdownTagShared", tags);
+                                }
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-warning">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            @foreach (var tag in await Model.GetTagsFromTask(@tsks.ID))
+            {
+                <div class="modal fade" id="tagUnlinkModal_@tag.ID" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="taskunlinkModalLabel">Esta seguro de que quiere sacar esta etiqueta?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form asp-action="UnlinkTag" asp-controller="Tag">
+                                <input type="hidden" name="tag_id" value="@tag.ID" />
+                                <input type="hidden" name="task_id" value="@tsks.ID" />
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-warning">Sacar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+}
+
 <div class="board">
 @if (Model != null)
 {
         @foreach(var item in await Model.GetColumns())
         {
             <div class="column">
-                <h2>@item.column_title</h2>
+                <h2 class="d-inline">@item.column_title</h2>
+                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#taskcreateModal_@item.column_title.Replace(' ', '_')">
+                    <i class="bi bi-plus-lg"></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#columnDeleteModal_@item.column_title.Replace(' ', '_')">
+                    <i class="bi bi-x-lg"></i>
+                </button>
                 @foreach (var tsks in await Model.GetTasksFromColumn(@item.ID))
                 {
                     <div class="task" draggable="true">
-                        <p>@tsks.title</p>
+                        <p class="d-inline">@tsks.title</p>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#tagLinkModal_@tsks.ID">
+                            <i class="bi bi-bookmark-plus"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#taskEditModal_@tsks.ID">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#taskDeleteModal_@tsks.ID">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                        <div class="d-block">
+                            <p>@tsks.text</p>
+                        </div>
                         <div class="tags">
                             @foreach (var tag in await Model.GetTagsFromTask(@tsks.ID))
                             {
-                                <span class="tag">@tag.tag_name</span>
+                                <span class="tag">
+                                    <p class="d-inline">@tag.tag_name</p>
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tagUnlinkModal_@tag.ID">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </span>
                             }
                         </div>
                     </div>

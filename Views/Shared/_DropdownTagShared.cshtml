@@ -1,0 +1,14 @@
+﻿@model List<proyecto_final_prog2.Domain.Entities.Tag>
+
+<div class="row">
+    <div class="form-group">
+        @Html.DropDownList(
+                 "tag_id",
+                 new SelectList(
+                 Model.Select(x => new { Value = x.ID, Text = x.tag_name }),
+                 "Value",
+                 "Text"
+                 )
+                 )
+    </div>
+</div>

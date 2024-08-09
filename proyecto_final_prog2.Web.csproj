@@ -17,4 +17,8 @@
     <ProjectReference Include="..\proyecto_final_prog2.Application\proyecto_final_prog2.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
 </Project>

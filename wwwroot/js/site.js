@@ -64,19 +64,38 @@ $(function () {
     /*$(".task").sortable({
         connectWith: ".column"
     }).disableSelection();*/
+    $("")
     $(".column").sortable({
         connectWith: ".column",
-            cursor: "move",
-            helper: "clone",
-            items: "> div",
-            stop: function (event, ui) {
-                var $item = ui.item;
-                /*var eventLabel = $item.text();
-                var newDay = $item.parent().attr("id");*/
-                console.log($item.parent().find("h2").text());
-                //console.log($item[0].id, eventLabel, newDay);
+        cursor: "move",
+        helper: "clone",
+        items: "> div",
+        stop: function (event, ui) {
+            var $item = ui.item;
+            /*var eventLabel = $item.text();
+            var newDay = $item.parent().attr("id");*/
 
-                // Here's where am ajax call will go
+            //console.log($item.parent().find("h2").text());
+            console.log($item.find("> p").text());
+            var id_task;
+            $.get({
+                url: "https://localhost:7052/api/Tasks/ID/" + $item.find("> p").text(),
+                success: (response) => {
+                    id_task = response;
+                },
+                async: false
+            });
+            var id_col;
+            $.get({
+                url: "https://localhost:7052/api/Columns/ID/" + $item.parent().find("> h2").text(),
+                success: (response) => {
+                    id_col = response;
+                },
+                async: false
+            });
+                $.ajax(`https://localhost:7052/api/Tasks/${id_task}/${id_col}`, {
+                    type: "PUT"
+                });
 
             }
         }).disableSelection();
