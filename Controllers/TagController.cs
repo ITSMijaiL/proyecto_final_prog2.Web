@@ -42,6 +42,17 @@ namespace proyecto_final_prog2.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTag(int tag_id)
+        {
+            if (ModelState.IsValid)
+            {
+                await _client.DeleteTag(tag_id);
+            }
+            return RedirectToAction("Index", controllerName: "Home");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTag(TagModel tagModel)
         {
             if (ModelState.IsValid)

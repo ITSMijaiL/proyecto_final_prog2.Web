@@ -32,6 +32,9 @@
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagEditModal">
         Editar etiqueta
     </button>
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tagDeleteModal">
+        Eliminar etiqueta
+    </button>
 </div>
 <!-- Modal -->
 <div class="modal fade" id="colcreateModal" tabindex="-1">
@@ -104,6 +107,28 @@
                 </div>
             </div>
         </div>
+
+    <div class="modal fade" id="tagDeleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tagCreateModalLabel">Eliminar etiquetas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    @foreach (var tag in await Model.GetTags())
+                    {
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tagDeleteModal_@tag.ID">
+                            @tag.tag_name
+                        </button>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
     @foreach(var tag in await Model.GetTags())
     {
         <div class="modal fade" id="tagEditModal_@tag.ID" tabindex="-1">
@@ -125,6 +150,24 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                             <button type="submit" class="btn btn-warning">Actualizar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="tagDeleteModal_@tag.ID" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="coldeleteModalLabel">Esta seguro de que quiere eliminar esta etiqueta?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form asp-action="DeleteTag" asp-controller="Tag">
+                        <input type="hidden" name="tag_id" value="@tag.ID" />
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-danger">Eliminar</button>
                         </div>
                     </form>
                 </div>
@@ -244,7 +287,7 @@
             </div>
             @foreach (var tag in await Model.GetTagsFromTask(@tsks.ID))
             {
-                <div class="modal fade" id="tagUnlinkModal_@tag.ID" tabindex="-1">
+                <div class="modal fade" id="tagUnlinkModal_@tag.ID@tsks.ID" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -301,7 +344,7 @@
                             {
                                 <span class="tag">
                                     <p class="d-inline">@tag.tag_name</p>
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tagUnlinkModal_@tag.ID">
+                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#tagUnlinkModal_@tag.ID@tsks.ID">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 </span>
